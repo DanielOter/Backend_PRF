@@ -24,9 +24,7 @@ CREATE TABLE `Role` (
     `rol_id` INTEGER NOT NULL AUTO_INCREMENT,
     `rol_name` VARCHAR(20) NOT NULL,
     `rol_description` VARCHAR(20) NOT NULL,
-    `rol_notificationId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Role_rol_notificationId_key`(`rol_notificationId`),
     PRIMARY KEY (`rol_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -67,7 +65,9 @@ CREATE TABLE `Notification` (
     `not_title` VARCHAR(25) NOT NULL,
     `not_descrption` VARCHAR(100) NOT NULL,
     `not_date` DATETIME(3) NOT NULL,
+    `not_roleId` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Notification_not_roleId_key`(`not_roleId`),
     PRIMARY KEY (`not_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -94,10 +94,10 @@ ALTER TABLE `User` ADD CONSTRAINT `User_usr_dniTypeId_fkey` FOREIGN KEY (`usr_dn
 ALTER TABLE `User` ADD CONSTRAINT `User_usr_unitId_fkey` FOREIGN KEY (`usr_unitId`) REFERENCES `Unit`(`uni_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Role` ADD CONSTRAINT `Role_rol_notificationId_fkey` FOREIGN KEY (`rol_notificationId`) REFERENCES `Notification`(`not_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Guest` ADD CONSTRAINT `Guest_gue_dniTypeId_fkey` FOREIGN KEY (`gue_dniTypeId`) REFERENCES `DniType`(`dty_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Guest` ADD CONSTRAINT `Guest_gue_dniTypeId_fkey` FOREIGN KEY (`gue_dniTypeId`) REFERENCES `DniType`(`dty_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Notification` ADD CONSTRAINT `Notification_not_roleId_fkey` FOREIGN KEY (`not_roleId`) REFERENCES `Role`(`rol_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Register` ADD CONSTRAINT `Register_reg_usrId_fkey` FOREIGN KEY (`reg_usrId`) REFERENCES `User`(`usr_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
