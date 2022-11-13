@@ -1,81 +1,47 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const errors = require("../../constants/errors");
+const {
+    getRoleByName,
+    createUser,
+    getAllUsers,
+    deleteUser,
+    getUserById,
+} = require("../database/repository");
+const { createError } = require("../utilities/createError");
 
-const createUser = async (
-  usr_name,
-  usr_lastName,
-  usr_mail,
-  usr_phone,
-  usr_rolId,
-  usr_allowed,
-  usr_dni,
-  usr_dniType,
-  usr_unitId,
-  usr_registersId
-) => {
-  const result = await prisma.postUser.create({
-    data: {
-      usr_name,
-      usr_lastName,
-      usr_mail,
-      usr_phone,
-      usr_rolId,
-      usr_allowed,
-      usr_dni,
-      usr_dniType,
-      usr_unitId,
-      usr_registersId,
-    },
-  });
-  return result;
+exports.createUserService = async (newUser) => {
+    try {
+        const role = await getRoleByName(newUser.role);
+        if (!role) throw createError(errors.ROLE_ERROR);
+        const response = await createUser(newUser, role);
+        return response;
+    } catch (error) {
+        throw error;
+    }
 };
 
-const getUsers = async () => {
-  const result = await prisma.postUser.findMany();
-  return result;
+exports.getUserByIdService = async (userId) => {
+    try {
+        const respose = getUserById(userId);
+        if (!respose) throw createError(errors.OWNER_ERROR);
+        return respose;
+    } catch (error) {
+        throw error;
+    }
 };
 
-const editUser = async (
-  usr_id,
-  usr_name,
-  usr_lastName,
-  usr_mail,
-  usr_phone,
-  usr_rolId,
-  usr_allowed,
-  usr_dni,
-  usr_dniType,
-  usr_unitId,
-  usr_registersId
-) => {
-  const result = await prisma.postUser.update({
-    where: { usr_id: Number(usr_id) },
-    data: {
-      usr_name: usr_name,
-      usr_lastName: usr_lastName,
-      usr_mail: usr_mail,
-      usr_phone: usr_phone,
-      usr_rolId: usr_rolId,
-      usr_allowed: usr_allowed,
-      usr_dni: usr_dni,
-      usr_dniType: usr_dniType,
-      usr_unitId: usr_unitId,
-      usr_registersId: usr_registersId,
-    },
-  });
-  return result;
+exports.getAllUsersService = async () => {
+    try {
+        return await getAllUsers();
+    } catch (error) {
+        throw error;
+    }
 };
 
-const deleteUser = async (id) => {
-  const post = await prisma.postUser.delete({
-    where: { id: Number(id) },
-  });
-  return "Deleted";
-};
-
-module.exports = {
-  createUser,
-  getUsers,
-  editUser,
-  deleteUser,
+exports.deleteUserService = async (userId) => {
+    try {
+        if (!(await getUserById(userId))) throw createError(errors.OWNER_ERROR);
+        return await deleteUser(userId);
+    } catch (error) {
+        throw error;
+    }
 };
