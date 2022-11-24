@@ -1,3 +1,4 @@
+const errors = require("../../constants/errors");
 const {
     createNotification,
     getAllNotificationsc,
@@ -6,7 +7,6 @@ const {
 } = require("../database/repository");
 const { createError } = require("../utilities/createError");
 
-const NOTIFICATION_ERROR = "The notification ID does not exist in the database";
 
 exports.createNotService = async (newNot) => {
     try {
@@ -19,7 +19,7 @@ exports.createNotService = async (newNot) => {
 exports.getNotByIdService = async (notId) => {
     try {
         const response = getNotificationById(notId);
-        if (!response) throw createError(400, NOTIFICATION_ERROR);
+        if (!response) throw createError(errors.NOTIFICATION_ERROR);
         return response;
     } catch (error) {
         throw error;

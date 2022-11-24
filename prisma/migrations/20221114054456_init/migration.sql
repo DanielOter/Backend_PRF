@@ -33,7 +33,6 @@ CREATE TABLE `Guest` (
     `gue_image` VARCHAR(90) NOT NULL,
     `gue_usrId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Guest_gue_usrId_key`(`gue_usrId`),
     PRIMARY KEY (`gue_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -55,8 +54,6 @@ CREATE TABLE `Register` (
     `reg_entryTime` DATETIME(3) NOT NULL,
     `reg_exitTime` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Register_reg_usrId_key`(`reg_usrId`),
-    UNIQUE INDEX `Register_reg_guestId_key`(`reg_guestId`),
     PRIMARY KEY (`reg_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

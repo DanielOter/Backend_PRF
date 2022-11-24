@@ -3,14 +3,16 @@ const {
     createUserController,
     deleteUserControlller,
     getAllUsersController,
-    getUserByIdController
-} = require("../controllers/user/userController");
+    getUserByIdController,
+    getUserByEmailController,
+} = require("../controllers/app/userController");
 
 const router = express.Router();
 
 router.post("/create", createUserController);
-router.get("/:id", getUserByIdController);
-router.get("/getAll", getAllUsersController);
+router.get("/", getAllUsersController);
+router.get("/id/:id", getUserByIdController);
+router.get("/email/:email", getUserByEmailController);
 router.delete("/delete/:id", deleteUserControlller);
 
 module.exports = router;

@@ -26,7 +26,20 @@ exports.getUserById = async (userId) => {
     const result = await prisma.user.findFirst({
         where: { usr_id: Number(userId) },
     });
-    console.log(result);
+    return result;
+};
+
+exports.getUserByIdNum = async (userIdNum) => {
+    const result = await prisma.user.findFirst({
+        where: { usr_idNum: String(userIdNum) },
+    });
+    return result;
+};
+
+exports.getUserByEmail = async (email) => {
+    const result = await prisma.user.findFirst({
+        where: { usr_mail: String(email) },
+    });
     return result;
 };
 
@@ -37,21 +50,24 @@ exports.getAllUsers = async () => {
 
 exports.deleteUser = async (userId) => {
     await prisma.user.delete({
-        where: { user_id: Number(userId) },
+        where: { usr_id: Number(userId) },
     });
     return "Deleted";
 };
 
 // Methods to create, get, update and delete guests in the prisma database
 
-exports.createGuest = async (newGuest, imagePath) => {
+exports.createGuest = async (newGuest, imagePath, hostId) => {
     const result = await prisma.guest.create({
         data: {
             gue_name: newGuest.name,
             gue_lastName: newGuest.lastName,
-            gue_dniType: newGuest.idType,
-            gue_dni: newGuest.idNum,
+            gue_idType: newGuest.idType,
+            gue_idNum: newGuest.idNum,
             gue_image: imagePath,
+            gue_user: {
+                connect: { usr_id: hostId },
+            },
         },
     });
     return result;
@@ -61,18 +77,37 @@ exports.addRegGuest = async (newReg) => {
     const response = await prisma.register.create({
         data: {
             reg_usrId: newReg.ownerId,
-            reg_guestId: newReg.guestId,
-            reg_entryTime: newReg.entry,
-            reg_exitTime: newReg.exit,
+            reg_guest: {
+                connect: { gue_id: newReg.guestId },
+            },
+            reg_entryTime: new Date(newReg.entry),
+            reg_exitTime: new Date(newReg.exit),
         },
     });
     return response;
 };
 
+exports.getLastReg = async (guestId) => {
+    const response = await prisma.register.findMany({
+        where: { reg_guestId: Number(guestId) },
+        orderBy: {
+            reg_id: "desc",
+        },
+        take: 1,
+    });
+    return response;
+};
+
 exports.getGuestById = async (guestId) => {
-    console.log(guestId);
     const result = await prisma.guest.findFirst({
-        where: { gue_id: Number(guestId) },
+        where: { gue_idNum: String(guestId) },
+    });
+    return result;
+};
+
+exports.getGuestByIdNum = async (guestIdNum) => {
+    const result = await prisma.guest.findFirst({
+        where: { gue_idNum: String(guestIdNum) },
     });
     return result;
 };
@@ -93,6 +128,13 @@ exports.deleteGuest = async (id) => {
 exports.getRoleByName = async (roleName) => {
     const result = await prisma.role.findFirst({
         where: { rol_name: String(roleName) },
+    });
+    return result;
+};
+
+exports.getRoleById = async (id) => {
+    const result = await prisma.role.findFirst({
+        where: { rol_id: Number(id) },
     });
     return result;
 };

@@ -8,7 +8,7 @@ const errors = require("../../../constants/errors");
 const { tryCatch } = require("../../utilities/tryCatch");
 
 exports.createNotificacionController = tryCatch(async (req, res) => {
-    const newNotificacion = req.body.newNotificacion;
+    const newNotificacion = req.body.newNot;
     if (!newNotificacion) throw createError(errors.REQ_ERROR);
     const response = await createNotService(newNotificacion);
     res.status(200).json(response);

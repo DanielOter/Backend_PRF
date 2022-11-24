@@ -4,7 +4,7 @@ const {
     getNotificacionByIdController,
     getAllNotificacionsController,
     deleteNotificacionControlller
-} = require("../controllers/user/notificationController");
+} = require("../controllers/app/notificationController");
 
 const router = express.Router();
 

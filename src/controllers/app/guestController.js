@@ -4,13 +4,13 @@ const {
     getGuestByIdService,
     getGuestsService,
     deleteGuestService,
+    getLastRegService,
 } = require("../../services/guestService");
-const multer = require("multer");
 const { createError } = require("../../utilities/createError");
 const { tryCatch } = require("../../utilities/tryCatch");
-
 const errors = require("../../../constants/errors");
 
+const multer = require("multer");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "./public/uploads");
@@ -22,13 +22,17 @@ const storage = multer.diskStorage({
 
 exports.upload = multer({ storage: storage });
 
-exports.createGuestController = tryCatch(async (req, res) => {
-    const guest = req.body.guest;
-    const imgPath = req.file.path;
-    if (!guest || !imgPath) throw createError(errors.REQ_ERROR);
-    const response = await createGuestService(guest, imgPath);
-    res.status(200).json(response);
-});
+exports.createGuestController = async (req, res, next) => {
+    try {
+        const guest = req.body?.guest;
+        const imgPath = req.file?.path;
+        if (!guest) throw createError(errors.REQ_ERROR);
+        const response = await createGuestService(guest, imgPath);
+        res.status(200).json(response);
+    } catch (error) {
+        next(error);
+    }
+};
 
 exports.addRegGuestController = tryCatch(async (req, res) => {
     const newReg = req.body.reg;
@@ -37,8 +41,14 @@ exports.addRegGuestController = tryCatch(async (req, res) => {
     res.status(200).json(response);
 });
 
+exports.getRegByguestIdController = tryCatch(async (req, res) => {
+    const { id } = req.params;
+    const response = await getLastRegService(id);
+    res.status(200).json(response);
+});
+
 exports.getGuestByIdController = tryCatch(async (req, res) => {
-    const id = req.body.guestId;
+    const { id } = req.params;
     if (!id) throw createError(errors.REQ_ERROR);
     const response = await getGuestByIdService(id);
     res.status(200).json(response);

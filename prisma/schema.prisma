@@ -38,7 +38,7 @@ model Guest {
   gue_idType String @db.VarChar(15)
   gue_idNum String @db.VarChar(15)
   gue_image String @db.VarChar(90)
-  gue_usrId Int @unique
+  gue_usrId Int 
   gue_user User @relation(fields: [gue_usrId] , references: [usr_id])
   gue_registers Register[]  
 }
@@ -52,8 +52,8 @@ model Notification {
  
 model Register {
   reg_id Int @id @default(autoincrement())
-  reg_usrId Int @unique
-  reg_guestId Int @unique 
+  reg_usrId Int 
+  reg_guestId Int 
   reg_guest Guest @relation(fields: [reg_guestId] , references: [gue_id])
   reg_entryTime DateTime
   reg_exitTime DateTime 

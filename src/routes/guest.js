@@ -5,13 +5,15 @@ const {
     deleteGuestControlller,
     getAllGuestsController,
     getGuestByIdController,
+    getRegByguestIdController,
     upload,
-} = require("../controllers/user/guestController");
+} = require("../controllers/app/guestController");
 
 const router = express.Router();
 
-router.post("/create", upload.single("image"), createGuestController);
+router.post("/create", upload.single("file"), createGuestController);
 router.post("/addReg", addRegGuestController);
+router.get("/getReg/:id", getRegByguestIdController);
 router.get("/", getAllGuestsController);
 router.get("/:id", getGuestByIdController);
 router.delete("/delete/:id", deleteGuestControlller);
