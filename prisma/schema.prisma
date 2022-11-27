@@ -16,51 +16,32 @@ model User {
   usr_lastName String @db.VarChar(50)
   usr_mail String @db.VarChar(50)
   usr_phone String @db.VarChar(50)
-  usr_rolId Int @unique
+  usr_rolId Int
   usr_rol Role @relation(fields: [usr_rolId] , references: [rol_id])
   usr_allowed Boolean
-  usr_dni String @db.VarChar(8)
-  usr_dniTypeId Int @unique
-  usr_dniType DniType @relation(fields: [usr_dniTypeId] , references: [dty_id])
-  usr_unitId  Int @unique
-  usr_unit Unit @relation(fields: [usr_unitId] , references: [uni_id]) 
-  usr_registersId Int @unique
-  usr_registers Register []
+  usr_idNum String @db.VarChar(15)
+  usr_idType String @db.VarChar(15)
+  usr_unit  String? @db.VarChar(15)
+  usr_uid String @db.VarChar(100)
+  usr_guests Guest[]
 }
 
 model Role {
   rol_id  Int @id @default(autoincrement()) 
-  rol_name String @db.VarChar(20)
-  rol_description String @db.VarChar(20)
-  rol_usr User ?
-  rol_notification Notification ?
+  rol_name String @db.VarChar(20) @unique
+  rol_users User[]
 }
-
-model Unit {
-  uni_id Int @id @default(autoincrement()) 
-  uni_usrId Int @unique
-  uni_usr User ?
-}
-
-
 
 model Guest {
   gue_id Int @id @default(autoincrement()) 
   gue_name String @db.VarChar(50)
-  gue_lastName String @db.VarChar(50) 
-  gue_dniTypeId Int @unique
-  gue_dniType DniType @relation(fields: [gue_dniTypeId] , references: [dty_id])
-  gue_dni String @db.VarChar(8)
-  gue_iamge String @db.VarChar(90)
-  gue_entryDay DateTime 
+  gue_lastName String @db.VarChar(50)
+  gue_idType String @db.VarChar(15)
+  gue_idNum String @db.VarChar(15)
+  gue_image String @db.VarChar(90)
+  gue_usrId Int 
+  gue_user User @relation(fields: [gue_usrId] , references: [usr_id])
   gue_registers Register[]  
-}
-
-model DniType {
-  dty_id  Int @id @default(autoincrement()) 
-  dty_type String @db.VarChar(20)
-  dty_guest Guest ?
-  dty_usr User ?
 }
 
 model Notification {
@@ -68,16 +49,13 @@ model Notification {
   not_title String @db.VarChar(25)
   not_descrption String @db.VarChar(100)
   not_date DateTime 
-  not_roleId Int @unique
-  not_destinataryRole Role @relation(fields: [not_roleId] , references: [rol_id]) 
 }
-
+ 
 model Register {
-  reg_id Int @id @default(autoincrement()) 
-  reg_usrId Int @unique
-  reg_usr User   @relation(fields: [reg_usrId] , references: [usr_id])
-  reg_guestId Int @unique 
-  reg_guest Guest   @relation(fields: [reg_guestId] , references: [gue_id])
+  reg_id Int @id @default(autoincrement())
+  reg_usrId Int 
+  reg_guestId Int 
+  reg_guest Guest @relation(fields: [reg_guestId] , references: [gue_id])
   reg_entryTime DateTime
   reg_exitTime DateTime 
 }

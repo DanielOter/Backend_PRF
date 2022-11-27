@@ -1,81 +1,91 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const errors = require("../../constants/errors");
+const admin = require("../../config/firebase_config");
 
-const createUser = async (
-  usr_name,
-  usr_lastName,
-  usr_mail,
-  usr_phone,
-  usr_rolId,
-  usr_allowed,
-  usr_dni,
-  usr_dniType,
-  usr_unitId,
-  usr_registersId
-) => {
-  const result = await prisma.postUser.create({
-    data: {
-      usr_name,
-      usr_lastName,
-      usr_mail,
-      usr_phone,
-      usr_rolId,
-      usr_allowed,
-      usr_dni,
-      usr_dniType,
-      usr_unitId,
-      usr_registersId,
-    },
-  });
-  return result;
+const {
+    getRoleByName,
+    createUser,
+    getAllUsers,
+    deleteUser,
+    getUserById,
+    getUserByIdNum,
+    getUserByEmail,
+    getRoleById,
+} = require("../database/repository");
+const { createError } = require("../utilities/createError");
+
+exports.createUserService = async (newUser) => {
+    try {
+        const user = await getUserByIdNum(newUser.idNum);
+        if (user) {
+            deleteUserFromFireBase(newUser.uid);
+            throw createError(errors.EXISTS);
+        }
+        const role = await getRoleByName(newUser.role);
+        if (!role) {
+            deleteUserFromFireBase(newUser.uid);
+            throw createError(errors.ROLE_ERROR);
+        }
+        const userCreated = await createUser(newUser, role);
+        const res = {
+            name: userCreated.usr_name,
+            lastName: userCreated.usr_lastName,
+            mail: userCreated.usr_mail,
+        };
+        return res;
+    } catch (error) {
+        throw error;
+    }
 };
 
-const getUsers = async () => {
-  const result = await prisma.postUser.findMany();
-  return result;
+exports.getUserByIdService = async (userId) => {
+    try {
+        const respose = await getUserById(userId);
+        if (!respose) throw createError(errors.USER_ERROR);
+        return respose;
+    } catch (error) {
+        throw error;
+    }
 };
 
-const editUser = async (
-  usr_id,
-  usr_name,
-  usr_lastName,
-  usr_mail,
-  usr_phone,
-  usr_rolId,
-  usr_allowed,
-  usr_dni,
-  usr_dniType,
-  usr_unitId,
-  usr_registersId
-) => {
-  const result = await prisma.postUser.update({
-    where: { usr_id: Number(usr_id) },
-    data: {
-      usr_name: usr_name,
-      usr_lastName: usr_lastName,
-      usr_mail: usr_mail,
-      usr_phone: usr_phone,
-      usr_rolId: usr_rolId,
-      usr_allowed: usr_allowed,
-      usr_dni: usr_dni,
-      usr_dniType: usr_dniType,
-      usr_unitId: usr_unitId,
-      usr_registersId: usr_registersId,
-    },
-  });
-  return result;
+exports.getUserByEmailService = async (email) => {
+    try {
+        const response = await getUserByEmail(email);
+        if (!response) throw createError(errors.USER_ERROR);
+        return response;
+    } catch (error) {
+        throw error;
+    }
 };
 
-const deleteUser = async (id) => {
-  const post = await prisma.postUser.delete({
-    where: { id: Number(id) },
-  });
-  return "Deleted";
+exports.getAllUsersService = async () => {
+    try {
+        return await getAllUsers();
+    } catch (error) {
+        throw error;
+    }
 };
 
-module.exports = {
-  createUser,
-  getUsers,
-  editUser,
-  deleteUser,
+exports.deleteUserService = async (userId) => {
+    try {
+        if (!(await getUserById(userId))) throw createError(errors.USER_ERROR);
+        return await deleteUser(userId);
+    } catch (error) {
+        throw error;
+    }
+};
+
+deleteUserFromFireBase = async (uid) => {
+    try {
+        admin
+            .auth()
+            .deleteUser(uid)
+            .then(() => {
+                console.log("Successfully deleted user");
+            })
+            .catch((error) => {
+                console.log("Error deleting user:", error);
+            });
+    } catch (error) {
+        throw error;
+    }
 };

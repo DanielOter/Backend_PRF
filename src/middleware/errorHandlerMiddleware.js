@@ -1,4 +1,4 @@
-const errorHandlerMiddleware = (err, req, res, next) => {
+exports.errorHandlerMiddleware = (err, req, res, next) => {
     const error = {
         status: err.status ? err.status : 500,
         message:
@@ -7,9 +7,6 @@ const errorHandlerMiddleware = (err, req, res, next) => {
                 : "Internal Server Error",
     };
 
+    console.log("🚀 ~ file: errorHandlerMiddleware.js ~ line 11 ~ error", error)
     res.status(error.status).json(error);
-};
-
-module.exports = {
-    errorHandlerMiddleware,
 };
