@@ -28,6 +28,7 @@ async function main() {
             usr_allowed: true,
             usr_idNum: "111111111",
             usr_idType: "dni",
+            usr_uid: "lIb2nNbfr0QEbcE9kJImRmh0C2F3"
         },
     });
 }

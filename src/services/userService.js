@@ -1,4 +1,6 @@
 const errors = require("../../constants/errors");
+const admin = require("../../config/firebase_config");
+
 const {
     getRoleByName,
     createUser,
@@ -14,11 +16,22 @@ const { createError } = require("../utilities/createError");
 exports.createUserService = async (newUser) => {
     try {
         const user = await getUserByIdNum(newUser.idNum);
-        if (user) throw createError(errors.EXISTS);
+        if (user) {
+            deleteUserFromFireBase(newUser.uid);
+            throw createError(errors.EXISTS);
+        }
         const role = await getRoleByName(newUser.role);
-        if (!role) throw createError(errors.ROLE_ERROR);
-        const response = await createUser(newUser, role);
-        return response;
+        if (!role) {
+            deleteUserFromFireBase(newUser.uid);
+            throw createError(errors.ROLE_ERROR);
+        }
+        const userCreated = await createUser(newUser, role);
+        const res = {
+            name: userCreated.usr_name,
+            lastName: userCreated.usr_lastName,
+            mail: userCreated.usr_mail,
+        };
+        return res;
     } catch (error) {
         throw error;
     }
@@ -36,13 +49,8 @@ exports.getUserByIdService = async (userId) => {
 
 exports.getUserByEmailService = async (email) => {
     try {
-        const user = await getUserByEmail(email);
-        if (!user) throw createError(errors.USER_ERROR);
-        const role = await getRoleById(user.usr_rolId);
-        const response = {
-            email: email,
-            role: role.rol_name,
-        };
+        const response = await getUserByEmail(email);
+        if (!response) throw createError(errors.USER_ERROR);
         return response;
     } catch (error) {
         throw error;
@@ -61,6 +69,22 @@ exports.deleteUserService = async (userId) => {
     try {
         if (!(await getUserById(userId))) throw createError(errors.USER_ERROR);
         return await deleteUser(userId);
+    } catch (error) {
+        throw error;
+    }
+};
+
+deleteUserFromFireBase = async (uid) => {
+    try {
+        admin
+            .auth()
+            .deleteUser(uid)
+            .then(() => {
+                console.log("Successfully deleted user");
+            })
+            .catch((error) => {
+                console.log("Error deleting user:", error);
+            });
     } catch (error) {
         throw error;
     }

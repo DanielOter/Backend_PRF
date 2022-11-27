@@ -29,14 +29,16 @@ exports.createGuestService = async (newGuest, imgPath) => {
 
 exports.addRegGuestService = async (newReg) => {
     try {
-        const host = await getUserByIdNum(newReg.ownerId);
-        if (!guest) throw createError(errors.GUEST_ERROR);
-        const guest = await getGuestByIdNum(newReg.guestId);
+        const host = await getUserByEmail(newReg.host);
         if (!host) throw createError(errors.USER_ERROR);
+        const guest = await getGuestById(newReg.guestId);
+        if (!guest) throw createError(errors.GUEST_ERROR);
 
         newReg.ownerId = host.usr_id;
         newReg.guestId = guest.gue_id;
         const response = await addRegGuest(newReg);
+        response.hostName = host.usr_name + " " + host.usr_lastName;
+        response.guestName = guest.gue_name + " " + guest.gue_lastName;
         return response;
     } catch (error) {
         throw error;

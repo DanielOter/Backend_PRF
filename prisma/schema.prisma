@@ -22,6 +22,7 @@ model User {
   usr_idNum String @db.VarChar(15)
   usr_idType String @db.VarChar(15)
   usr_unit  String? @db.VarChar(15)
+  usr_uid String @db.VarChar(100)
   usr_guests Guest[]
 }
 

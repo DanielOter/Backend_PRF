@@ -17,6 +17,7 @@ exports.createUser = async (newUser, role) => {
             usr_idNum: newUser.idNum,
             usr_idType: newUser.idType,
             usr_unit: newUser.unit,
+            usr_uid: newUser.uid,
         },
     });
     return result;
@@ -100,7 +101,7 @@ exports.getLastReg = async (guestId) => {
 
 exports.getGuestById = async (guestId) => {
     const result = await prisma.guest.findFirst({
-        where: { gue_idNum: String(guestId) },
+        where: { gue_id: Number(guestId) },
     });
     return result;
 };

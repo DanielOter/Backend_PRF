@@ -10,6 +10,7 @@ CREATE TABLE `User` (
     `usr_idNum` VARCHAR(15) NOT NULL,
     `usr_idType` VARCHAR(15) NOT NULL,
     `usr_unit` VARCHAR(15) NULL,
+    `usr_uid` VARCHAR(100) NOT NULL,
 
     PRIMARY KEY (`usr_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
