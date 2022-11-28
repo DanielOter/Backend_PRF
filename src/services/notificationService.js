@@ -1,7 +1,7 @@
 const errors = require("../../constants/errors");
 const {
     createNotification,
-    getAllNotificationsc,
+    getAllNotifications,
     getNotificationById,
     deleteNotification,
 } = require("../database/repository");
@@ -28,7 +28,7 @@ exports.getNotByIdService = async (notId) => {
 
 exports.getAllNotsService = async () => {
     try {
-        return await getAllNotificationsc();
+        return await getAllNotifications();
     } catch (error) {
         throw error;
     }
