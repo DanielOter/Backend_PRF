@@ -3,7 +3,7 @@ const {
     getNotByIdService,
     getAllNotsService,
     deleteNotService,
-} = require("../../services/userService");
+} = require("../../services/notificationService");
 const errors = require("../../../constants/errors");
 const { tryCatch } = require("../../utilities/tryCatch");
 

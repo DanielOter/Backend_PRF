@@ -128,7 +128,7 @@ exports.deleteGuest = async (id) => {
 
 exports.getRoleByName = async (roleName) => {
     const result = await prisma.role.findFirst({
-        where: { rol_name: String(roleName) },
+        where: { rol_name: String(roleName.value) },
     });
     return result;
 };
@@ -173,4 +173,36 @@ exports.deleteNotification = async (id) => {
         where: { id: Number(id) },
     });
     return "Deleted";
+};
+
+// Methods to create, get, update and delete Alerts in the prisma database
+
+exports.createAlert = async (newAlert) => {
+    const result = await prisma.alert.create({
+        data: {
+            alert_isOn: true,
+            alert_usrId: newAlert.userId,
+            alert_usrName: newAlert.usrName,
+            alert_latitud: newAlert.latitude,
+            alert_longitud: newAlert.longitude,
+        },
+    });
+    return result;
+};
+
+exports.getAllAlerts = async () => {
+    const result = await prisma.alert.findMany();
+    return result;
+};
+
+exports.turnOffAlert = async (id) => {
+    const result = await prisma.alert.update({
+        where: {
+            alert_id: Number(id),
+        },
+        data: {
+            alert_isOn: false,
+        },
+    });
+    return result;
 };
