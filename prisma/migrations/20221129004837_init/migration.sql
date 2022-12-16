@@ -58,6 +58,18 @@ CREATE TABLE `Register` (
     PRIMARY KEY (`reg_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `alert` (
+    `alert_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `alert_isOn` BOOLEAN NOT NULL,
+    `alert_usrId` INTEGER NOT NULL,
+    `alert_usrName` VARCHAR(50) NOT NULL,
+    `alert_latitud` DOUBLE NOT NULL,
+    `alert_longitud` DOUBLE NOT NULL,
+
+    PRIMARY KEY (`alert_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `User` ADD CONSTRAINT `User_usr_rolId_fkey` FOREIGN KEY (`usr_rolId`) REFERENCES `Role`(`rol_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 

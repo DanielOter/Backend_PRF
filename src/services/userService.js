@@ -21,6 +21,7 @@ exports.createUserService = async (newUser) => {
             throw createError(errors.EXISTS);
         }
         const role = await getRoleByName(newUser.role);
+        console.log("🚀 ~ file: userService.js ~ line 24 ~ exports.createUserService= ~ role", role)
         if (!role) {
             deleteUserFromFireBase(newUser.uid);
             throw createError(errors.ROLE_ERROR);
@@ -51,6 +52,8 @@ exports.getUserByEmailService = async (email) => {
     try {
         const response = await getUserByEmail(email);
         if (!response) throw createError(errors.USER_ERROR);
+        const rol = await getRoleById(response.usr_rolId);
+        response.usr_rolId = rol.rol_name;
         return response;
     } catch (error) {
         throw error;

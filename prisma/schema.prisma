@@ -60,3 +60,12 @@ model Register {
   reg_exitTime DateTime 
 }
 
+model alert {
+  alert_id Int @id @default(autoincrement())
+  alert_isOn Boolean
+  alert_usrId Int
+  alert_usrName String @db.VarChar(50)
+  alert_latitud Float
+  alert_longitud Float
+}
+
